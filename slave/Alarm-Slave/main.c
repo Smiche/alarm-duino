@@ -2,7 +2,7 @@
 
 #define F_CPU 16000000UL        // Speed of the microprocessor, in hertz (16 MHz)
 #include "avr/io.h"
-#include "avr/delay.h"
+#include "util/delay.h"
 #include "main.h"
 #include "uart.h"
 #include "keypad.h"
@@ -48,6 +48,7 @@ void protocolOut(){
     printf("$%d#%s\n",oldTriggerVal,keyBuffer);
     fflush(stdout);
 }
+
 int main(void) {
     init();
     KEYPAD_Init();

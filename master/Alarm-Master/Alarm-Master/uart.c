@@ -10,6 +10,8 @@
 #include <avr/io.h>
 #include <stdio.h>
 #include <avr/sfr_defs.h>
+#include <string.h>
+#include "millis.h"
 
 // Baud rate for serial
 #ifndef BAUD
@@ -47,4 +49,22 @@ char uart_getchar(FILE *stream) {
         return UDR0;
     }
 	return 0x63;
+}
+
+void uart_getstring(char *buffer, uint8_t length) {
+    uint8_t i = 0;
+    char c;
+    uint32_t timeout_start = millis(); // assuming you have defined millis() to return the current time in milliseconds
+    do {
+        if (UCSR0A & (1 << RXC0)) {
+            c = UDR0;
+            if ((c != '\n') && (i < length-1)) {
+                buffer[i++] = c;
+            }
+        }
+    } while ((millis() - timeout_start) < 1000UL);
+    buffer[i] = '\0';
+    if (i == 0) {
+        strcpy(buffer, ""); // return an empty string if no input was received
+    }
 }
