@@ -14,8 +14,11 @@ REMEMBER: Add sei(); after init_millis() to enable global interrupts!
 
 #include "millis.h"
 
-ISR(TIMER1_COMPA_vect)
+ISR(TIMER2_COMPA_vect)
 {
+  if(chipTunes_IsPlaying()){
+    chipTunes_ISR();
+  }
   timer1_millis++;
 }
 
@@ -26,14 +29,15 @@ void init_millis(unsigned long f_cpu)
   ctc_match_overflow = ((f_cpu / 1000) / 8); //when timer1 is this value, 1ms has passed
 
   // (Set timer to clear when matching ctc_match_overflow) | (Set clock divisor to 8)
-  TCCR1B |= (1 << WGM12) | (1 << CS11);
+  TCCR2B |= (1 << WGM12) | (1 << CS11);
 
   // high byte first, then low byte
-  OCR1AH = (ctc_match_overflow >> 8);
-  OCR1AL = ctc_match_overflow;
+  //OCR1AH
+  //OCR2B = (ctc_match_overflow >> 8);
+  OCR2A = ctc_match_overflow;
 
   // Enable the compare match interrupt
-  TIMSK1 |= (1 << OCIE1A);
+  TIMSK2 |= (1 << OCIE2A);
 
   //REMEMBER TO ENABLE GLOBAL INTERRUPTS AFTER THIS WITH sei(); !!!
 }
