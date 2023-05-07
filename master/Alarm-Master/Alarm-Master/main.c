@@ -17,7 +17,7 @@ enum State {DISARMED=0, ARMED=1, ALARMING=2};
 enum State controllerState = DISARMED;
 uint32_t lastEntry = 0;
 uint32_t timeout = 25000;
-uint8_t timeoutPlayed = 0;
+uint8_t timeoutPlayed = 1;
 char *password = "D4321";
 
 // Initialization for millis, uart and chipTunes libraries
@@ -47,7 +47,7 @@ int main(void) {
     fflush(stdout);
     
     char *inputString = malloc(sizeof(char)*9); // string holding last input string
-    char *lastDigits = "-----"; // string holding the last keypad input
+    char *lastDigits = "00000"; // string holding the last keypad input
     char *lastMotion = '1'; // holding the last state of the motion sensor
     
     while(1) {
@@ -77,6 +77,7 @@ int main(void) {
                 if(strcmp(digits, password) == 0 && (lastEntry + timeout) > millis()){ // Disarm if password matches and no input timeout
                     controllerState = DISARMED;
                     skipTimeout = 1;
+                    timeoutPlayed = 1;
                     printf("Alarm disarmed.\n");
                     fflush(stdout);
                 }
@@ -89,6 +90,8 @@ int main(void) {
                     controllerState = DISARMED;
                     printf("Alarm disarmed.\n");
                     fflush(stdout);
+                    skipTimeout = 1;
+                    timeoutPlayed = 1;
                 }
                 break;
             }
@@ -97,6 +100,8 @@ int main(void) {
                 lastEntry = millis();
                 timeoutPlayed = 0;
             }
+            
+            strncpy(lastDigits, digits,6);
         }
         
         if((lastEntry + timeout) < millis() && !timeoutPlayed){
