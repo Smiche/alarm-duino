@@ -54,7 +54,7 @@ char uart_getchar(FILE *stream) {
 void uart_getstring(char *buffer, uint8_t length) {
     uint8_t i = 0;
     char c;
-    uint32_t timeout_start = millis(); // assuming you have defined millis() to return the current time in milliseconds
+    uint32_t timeout_start = millis(); // get time at the start
     do {
         if (UCSR0A & (1 << RXC0)) {
             c = UDR0;
@@ -62,7 +62,7 @@ void uart_getstring(char *buffer, uint8_t length) {
                 buffer[i++] = c;
             }
         }
-    } while ((millis() - timeout_start) < 1000UL);
+    } while ((millis() - timeout_start) < 1000UL); // keep reading until the timeout
     buffer[i] = '\0';
     if (i == 0) {
         strcpy(buffer, ""); // return an empty string if no input was received

@@ -125,10 +125,8 @@ void KEYPAD_WaitForKeyRelease()
 		{
 			M_ROW = 0x0F;           // Pull the ROW lines to low and Column lines high.
             M_ROW_B &= (~((1<<PINB3) | (1<<PINB4)));
-            //M_RowColDirection_B = M_RowColDirection_B | (1<<PINB3) | (1<<PINB4); // column pins on port b to pull-up
             
 			key = M_COL & 0x0F;     // Read the first two columns (0,1)
-           // key |= (M_COL_B & 24) >> 1; // Read the second two columns (2,3)
 		}while(key!=0x0F);
 
 		_delay_ms(1);
@@ -172,7 +170,7 @@ int KEYPAD_WaitForKeyPress()
             if(loopCounter > 500){
                 return 0;
             }
-		}while(var_keyPress_u8==0x0F); // Wait till the Key is pressed,
+        }while(var_keyPress_u8==0x0F); // Wait till the Key is pressed,
 		// if a Key is pressed the corresponding Column line go low
 
 		_delay_ms(1);		  // Wait for some time(debounce Time);
@@ -217,7 +215,7 @@ uint8_t KEYPAD_GetKey()
 	KEYPAD_WaitForKeyRelease();    // Wait for the previous key release
 	_delay_ms(1);
 
-	if(KEYPAD_WaitForKeyPress() == 0){ // Wait for the new key press
+	if(KEYPAD_WaitForKeyPress() == 0){ // Check for a key press once and exit if no input
         return 0;
     }
     
@@ -273,7 +271,7 @@ static uint8_t keypad_ScanKey()
 	for(i=0;i<0x04;i++)                // Scan All the 4-Rows for key press
 	{
 		M_ROW = var_keyScanCode_u8 & 0x3F ;        // Select 1-Row at a time for Scanning the Key
-        M_ROW_B = (var_keyScanCode_u8 & 0xC0) >> 3;
+        M_ROW_B = (var_keyScanCode_u8 & 0xC0) >> 3; // Select rows from secondary port
         
 		_delay_ms(1);
 		var_keyPress_u8 = M_COL & 0x0F;     // Read the first two columns (0,1)

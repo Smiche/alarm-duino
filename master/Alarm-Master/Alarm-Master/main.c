@@ -61,12 +61,14 @@ int main(void) {
             strncpy(digits, &inputString[3], 6);
             printf("Read: %s\n",digits);
             fflush(stdout);
+            int skipTimeout = 0;
             
             switch(controllerState)
             {
                 case DISARMED:
                 if(inputString[3] == 'A'){
                     timeoutPlayed = 1;
+                    skipTimeout = 1;
                     controllerState = ARMED;
                     printf("Alarm armed.\n");
                     fflush(stdout);
@@ -75,6 +77,7 @@ int main(void) {
                 case ARMED:
                 if(strcmp(digits, password) == 0 && (lastEntry + timeout) > millis()){
                     controllerState = DISARMED;
+                    skipTimeout = 1;
                     printf("Alarm disarmed.\n");
                     fflush(stdout);
                 }
@@ -91,7 +94,7 @@ int main(void) {
                 break;
             }
             
-            if(strcmp(digits, lastDigits) != 0){
+            if(strcmp(digits, lastDigits) != 0 && skipTimeout == 0){
                 lastEntry = millis();
                 timeoutPlayed = 0;
             }

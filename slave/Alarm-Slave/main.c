@@ -18,20 +18,7 @@ char *keyBuffer = "00000";
 void init()
 {
     DDRB = DDRB & (~(1<<TRIGGER));		/* Make TRIGGER as input pin */
-    //DDRB |= (1 << DDB1);     // set pin 3 of Port B as output
-
-    //PORTB = PORTB | (1<<TRIGGER);		/* Enable pull-up on PD2 by writing 1 to it */
-    //DDRB = DDRB & (~((1<<DDB1) | (1<<DDB2) | (1<<DDB3) | (1<<DDB4))); /* Keypad columns as inputs */
-    //PORTB = PORTB | (1<<PINB1) | (1<<PINB2) | (1<<PINB3) | (1<<PINB4)); /* Keypad columns as pull-ups */
     
-    //DDRC |= (1 << DDC4) | (1 << DDC5); /* Keypad rows as outputs on C pins*/
-    //DDRB |= (1 << DDB3) | (1 << DDB4); /* Keypad rows as outputs on B pins */
-    //DDRC = DDRC & (~((1<<DDC4) | (1<<DDC5))); // rows to low
-    // Row pins to high
-    //PORTC |= (1 << PINC4) | (1 << PINC5);
-    //PORTB |= (1 << PINB3) | (1 << PINB4);
-    
-    // UART input/output initialization
     uart_init();
     stdout = &uart_output;
     stdin  = &uart_input;
@@ -52,13 +39,10 @@ void protocolOut(){
 int main(void) {
     init();
     KEYPAD_Init();
-    //printf("Init complete. \n");
     
     _delay_ms(3000);
     fflush(stdout);
-
-    //DDRB |= (1 << DDB3) | (1 << DDB4); // DDB3 /4 outputs
-    //PORTB &= (~((1<<PINB3) | (1<<PINB4)));// both to low
+    
     while(1) {
         // Checking the obstacle sensor
         int triggerVal = PINB & (1 << TRIGGER);
